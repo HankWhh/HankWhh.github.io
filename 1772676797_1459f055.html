@@ -1,0 +1,374 @@
+<think>
+Here's a thinking process that leads to the suggested HTML file:
+
+1.  **Analyze the Request:**
+
+    *   **Role:** Senior Front-End Developer specializing in high-fidelity mobile prototypes.
+    *   **Context:**
+        *   Visual Standards: List items (min-h 56px, padding 16px, dividers), Tailwind mappings (rounded-12px, text-111827, bg-3B82F6), Interaction states (Default, Active, Disabled).
+        *   Current State: App structure exists, but needs updating.
+    *   **Task (T01):** Update "Passenger Flow Detail" page.
+        *   Action: Introduce a Tab component at the top.
+        *   Tabs: "Statistics" (original view, default) and "Device List" (new).
+        *   Layout: Ensure content area adapts or scrolls correctly.
+        *   Logic: State management for tab switching.
+    *   **Output Requirements:**
+        *   Single HTML file.
+        *   Mobile simulation: `w-[375px] min-h-screen` centered.
+        *   Tech Stack: React 18, ReactDOM 18, Babel, TailwindCSS, Lucide Icons (via CDN).
+        *   Safety: No destructuring of Lucide icons, use fallbacks.
+        *   Format: Enclosed in `<details>` with specific sections.
+
+2.  **Design & Architecture:**
+
+    *   **Structure:**
+        *   `App` container (centered, mobile width).
+        *   `Header`: Title "Passenger Flow Detail".
+        *   `TabBar`: Two buttons ("Statistics", "Device List"). Active state styling based on specs (Primary color bg, white text vs likely gray/white background for inactive). *Self-correction: The prompt specifies "Default: Background primary, text white" for buttons generally, but for Tabs, usually, the *active* tab is highlighted. I will apply the Primary style to the Active tab and a neutral style to the Inactive tab to follow standard UI patterns while adhering to the color palette.*
+        *   `Content Area`: A container that renders either the Statistics view or the Device List view based on state.
+    *   **Visuals (Tailwind):**
+        *   Background: Light gray (e.g., `bg-gray-50`).
+        *   Primary: `bg-[#3B82F6]`.
+        *   Text: `text-[#111827]`.
+        *   List Items: `min-h-[56px] p-[16px] border-b border-[#E6E6E6]`.
+    *   **Interactions:**
+        *   Clicking a tab updates `activeTab` state.
+        *   Content switches immediately (no animation specified, but simple conditional rendering is fine).
+    *   **Components:**
+        *   `TabItem`: Reusable button for tabs.
+        *   `StatisticsView`: Placeholder for the original content (charts/cards).
+        *   `DeviceListView`: List of devices using the specified List Item style.
+
+3.  **Drafting the Code (Mental or Scratchpad):**
+
+    *   *HTML Shell:* Standard HTML5 with CDN links.
+    *   *React Logic:*
+        ```javascript
+        const [activeTab, setActiveTab] = useState('statistics');
+        // ...
+        ```
+    *   *Tab Component:*
+        Needs to handle `isActive`.
+        Style: `flex-1 h-12 flex items-center justify-center transition-colors`.
+        Active: `bg-[#3B82F6] text-white`.
+        Inactive: `bg-white text-gray-500`.
+    *   *List Item Component:*
+        `div.min-h-[56px].p-[16px].flex.items-center.justify-between.border-b.border-[#E6E6E6]`.
+    *   *Mock Data:* Need some dummy devices (Device A, Device B) and some stats numbers.
+
+4.  **Refining Visuals based on Strict Specs:**
+
+    *   *Prompt Requirement:* "rounded-[12px] for medium rounded".
+    *   *Prompt Requirement:* "List Item min-height 56px, padding 16px, border #E6E6E6".
+    *   *Prompt Requirement:* "Primary bg-[#3B82F6]".
+
+5.  **Implementation Steps (Writing the actual code):**
+
+    *   **Setup:** Add Tailwind script, React scripts, Lucide script.
+    *   **Icons:** Get `BarChart3` (for stats), `List` (for list), `ChevronRight` (for list items), `Activity` (for stats). Use the safe access pattern: `const IconName = LucideReact.IconName || ...`.
+    *   **Main Component:**
+        *   Container: `w-[375px] min-h-screen bg-gray-50 mx-auto shadow-2xl overflow-hidden relative`.
+        *   Header: Simple title bar.
+        *   Tabs: A container with `flex bg-white rounded-[12px] p-1 mx-4 mt-4`. *Wait, standard mobile tabs are often full width or segmented controls.* Let's go with a Segmented Control style (Pill shape) as it fits "rounded-[12px]" well.
+        *   Content: `flex-1 overflow-y-auto mt-4`.
+    *   **View - Statistics:**
+        *   Summary cards (Total, Today, Peak).
+        *   Maybe a mock chart area (visual placeholder).
+    *   **View - Device List:**
+        *   Map through an array of devices.
+        *   Apply List Item styles strictly.
+
+6.  **Addressing Specific Prompt Constraints:**
+
+    *   "No destructuring": `const { BarChart3 } = LucideReact;` -> **Forbidden**.
+    *   "Use explicit assignment": `const BarChart3Icon = LucideReact.BarChart3 || ...` -> **Required**.
+    *   "Render protection": `{BarChart3Icon && <BarChart3Icon ... />}` -> **Required**.
+
+7.  **Final Code Assembly & Review:**
+
+    *   Check colors: `#3B82F6` used? Yes.
+    *   Check list items: `min-h-[56px]`, `p-[16px]`, `border-[#E6E6E6]`. Yes.
+    *   Check layout: `w-[375px]`. Yes.
+    *   Check logic: Tabs switch? Yes.
+
+8.  **Constructing the Output:**
+
+    *   Wrap in `<details>`.
+    *   Add description.
+    *   Insert HTML code block.
+
+**(Self-Correction during coding):**
+The prompt mentions "Default: Background primary, text white" for interaction states. For a Tab bar, usually, the *Active* state is the "Primary" one. If I make *both* tabs Primary background, they won't be distinguishable. I will interpret "Default" in the context of the *Button* component spec provided, but for the *Tab Switcher* specifically, I will use the Primary color for the Active state and a neutral color for the Inactive state to ensure usability, while respecting the color palette.
+
+Also, the prompt asks for "Visual Consistency". I will ensure the list items in the "Device List" tab strictly follow the "3.3 List Item" spec.
+
+9.  **Final Polish:** Add comments explaining the "Safe Icon Access" pattern to show compliance.
+
+**(Code Structure for the response):**
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ ... scripts ...
+</head>
+<body class="bg-gray-200 flex justify-center items-start pt-10 min-h-screen">
+  <div id="root" class="w-[375px] min-h-screen bg-white shadow-2xl relative overflow-hidden font-sans">
+     <!-- React App Here -->
+  </div>
+  <script type="text/babel">
+     // React Code
+  </script>
+</body>
+</html>
+```
+
+10. **Generating the Response.** (Proceeds to generate output based on these steps).
+    *   *Icon selection:* `BarChart3`, `List`, `ChevronRight`, `Users`, `Monitor`.
+    *   *Tab Logic:* `useState('stats')`.
+    *   *Styling:* Tailwind classes exactly as requested.
+
+**(Final Check against "No Native Alerts"):** No alerts used.
+**(Final Check against "Single File"):** All in one file.
+**(Final Check against "Specific Text"):** "客流详情", "统计", "设备列表".
+
+Let's write it.
+
+</think>
+
+<details>
+<summary>📂 点击展开页面原型：客流详情页主体结构 (T01)</summary>
+
+### 📄 页面说明
+- **类型**: Page (Update)
+- **开发分支**: 框架交互
+- **核心逻辑**:
+    1.  **Tab 状态管理**: 使用 React `useState` 控制 `activeTab`，在“统计”和“设备列表”之间切换，默认显示“统计”。
+    2.  **动态布局渲染**: 根据当前选中的 Tab 条件渲染不同的内容区域（`StatisticsView` 或 `DeviceListView`），并严格遵守列表项高度（56px）和分割线（#E6E6E6）的视觉规范。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客流详情 - Passenger Flow Detail</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (Core & React) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+
+    <!-- Tailwind Configuration for Specific Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6', // 主色
+                        'text-primary': '#111827', // 一级文字
+                        'divider': '#E6E6E6', // 分割线
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 自定义滚动条隐藏，保持移动端原生感 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #f3f4f6; /* 模拟背景隔离色 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 真机模拟容器 -->
+    <div id="root" class="w-[375px] min-h-screen mx-auto bg-gray-50 shadow-2xl relative overflow-hidden flex flex-col">
+        <!-- React App 将挂载于此 -->
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const LucideReact = window.LucideReact;
+
+        // 安全获取图标组件的辅助函数
+        const getIcon = (iconName) => {
+            return LucideReact[iconName] || LucideReact.icons?.[iconName] || (() => null);
+        };
+
+        // 图标定义
+        const BarChart3Icon = getIcon('BarChart3');
+        const ListIcon = getIcon('List');
+        const ChevronRightIcon = getIcon('ChevronRight');
+        const UsersIcon = getIcon('Users');
+        const MonitorIcon = getIcon('Monitor');
+        const ArrowLeftIcon = getIcon('ArrowLeft');
+        const MoreVerticalIcon = getIcon('MoreVertical');
+
+        // --- 子组件：统计视图 ---
+        const StatisticsView = () => {
+            return (
+                <div className="px-4 py-4 space-y-4 animate-fade-in">
+                    {/* 关键指标卡片 */}
+                    <div className="bg-white rounded-[12px] p-4 shadow-sm">
+                        <div className="flex items-center gap-2 mb-4">
+                            {UsersIcon && <UsersIcon size={20} className="text-primary" />}
+                            <h3 className="text-lg font-bold text-text-primary">今日客流</h3>
+                        </div>
+                        <div className="flex justify-between items-end">
+                            <span className="text-4xl font-bold text-text-primary">1,248</span>
+                            <span className="text-sm text-green-500 font-medium">+12.5% 较昨日</span>
+                        </div>
+                    </div>
+
+                    {/* 分布图模拟 */}
+                    <div className="bg-white rounded-[12px] p-4 shadow-sm h-64 flex flex-col">
+                        <h4 className="text-base font-semibold text-text-primary mb-4">时段分布</h4>
+                        <div className="flex-1 flex items-end justify-between gap-2 px-2">
+                            {[40, 65, 30, 85, 50, 90, 60].map((h, i) => (
+                                <div key={i} className="w-full bg-blue-100 rounded-t-sm relative group">
+                                    <div 
+                                        className="absolute bottom-0 w-full bg-primary rounded-t-sm transition-all duration-500 hover:bg-blue-600" 
+                                        style={{ height: `${h}%` }}
+                                    ></div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-400 mt-2 px-2">
+                            <span>08:00</span>
+                            <span>12:00</span>
+                            <span>16:00</span>
+                            <span>20:00</span>
+                        </div>
+                    </div>
+
+                    {/* 额外列表项示例 (复用样式) */}
+                    <div className="bg-white rounded-[12px] overflow-hidden shadow-sm">
+                        <div className="min-h-[56px] px-[16px] flex items-center justify-between border-b border-[#E6E6E6]">
+                            <span className="text-text-primary text-sm">高峰时段预警</span>
+                            <span className="text-red-500 text-sm font-medium">14:00 - 15:00</span>
+                        </div>
+                        <div className="min-h-[56px] px-[16px] flex items-center justify-between">
+                            <span className="text-text-primary text-sm">平均停留时长</span>
+                            <span className="text-gray-500 text-sm">45 分钟</span>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 子组件：设备列表视图 ---
+        const DeviceListView = () => {
+            // 模拟设备数据
+            const devices = [
+                { id: 1, name: '入口摄像头 A01', status: 'online', count: 342 },
+                { id: 2, name: '入口摄像头 A02', status: 'online', count: 289 },
+                { id: 3, name: '出口摄像头 B01', status: 'offline', count: 0 },
+                { id: 4, name: '大厅热成像仪 C01', status: 'online', count: 617 },
+            ];
+
+            return (
+                <div className="flex-1 bg-white animate-fade-in">
+                    {devices.map((device, index) => (
+                        <div 
+                            key={device.id} 
+                            // 严格遵守规范：最小高度 56px，内边距 16px，底边 1px #E6E6E6
+                            className="min-h-[56px] px-[16px] flex items-center justify-between border-b border-[#E6E6E6] hover:bg-gray-50 transition-colors cursor-pointer"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className={`w-2 h-2 rounded-full ${device.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                                <div className="flex flex-col">
+                                    <span className="text-text-primary text-sm font-medium">{device.name}</span>
+                                    <span className="text-xs text-gray-400">{device.status === 'online' ? '在线' : '离线'}</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-text-primary text-sm font-bold">{device.count}</span>
+                                {ChevronRightIcon && <ChevronRightIcon size={16} className="text-gray-400" />}
+                            </div>
+                        </div>
+                    ))}
+                    {/* 列表底部留白，防止被遮挡 */}
+                    <div className="h-4"></div>
+                </div>
+            );
+        };
+
+        // --- 主页面组件 ---
+        const PassengerFlowDetail = () => {
+            const [activeTab, setActiveTab] = useState('statistics'); // 默认选中 '统计'
+
+            return (
+                <div className="flex flex-col h-full bg-gray-50">
+                    {/* 顶部导航栏 */}
+                    <header className="bg-white px-4 h-14 flex items-center justify-between shadow-sm z-10 sticky top-0">
+                        <div className="flex items-center gap-2">
+                            {ArrowLeftIcon && <ArrowLeftIcon size={20} className="text-text-primary cursor-pointer" />}
+                            <h1 className="text-[17px] font-bold text-text-primary">客流详情</h1>
+                        </div>
+                        {MoreVerticalIcon && <MoreVerticalIcon size={20} className="text-text-primary cursor-pointer" />}
+                    </header>
+
+                    {/* Tab 切换组件 */}
+                    <div className="px-4 pt-4 pb-2 bg-white sticky top-14 z-10 shadow-sm">
+                        <div className="flex p-1 bg-gray-100 rounded-[12px]">
+                            {/* Tab 1: 统计 */}
+                            <button
+                                onClick={() => setActiveTab('statistics')}
+                                className={`flex-1 h-10 rounded-[10px] flex items-center justify-center gap-2 text-sm font-medium transition-all duration-200 ${
+                                    activeTab === 'statistics' 
+                                    ? 'bg-[#3B82F6] text-white shadow-sm' // 选中状态：主色背景，白字
+                                    : 'text-gray-500 hover:text-gray-700' // 默认状态
+                                }`}
+                            >
+                                {BarChart3Icon && <BarChart3Icon size={16} />}
+                                统计
+                            </button>
+
+                            {/* Tab 2: 设备列表 */}
+                            <button
+                                onClick={() => setActiveTab('deviceList')}
+                                className={`flex-1 h-10 rounded-[10px] flex items-center justify-center gap-2 text-sm font-medium transition-all duration-200 ${
+                                    activeTab === 'deviceList' 
+                                    ? 'bg-[#3B82F6] text-white shadow-sm' // 选中状态
+                                    : 'text-gray-500 hover:text-gray-700' // 默认状态
+                                }`}
+                            >
+                                {ListIcon && <ListIcon size={16} />}
+                                设备列表
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* 内容区域：根据 Tab 切换，自适应高度或滚动 */}
+                    <main className="flex-1 overflow-y-auto no-scrollbar relative">
+                        {activeTab === 'statistics' ? <StatisticsView /> : <DeviceListView />}
+                    </main>
+                </div>
+            );
+        };
+
+        // 渲染应用
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PassengerFlowDetail />);
+    </script>
+</body>
+</html>
+```
