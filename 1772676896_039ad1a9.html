@@ -1,0 +1,348 @@
+<think>
+Here's a thinking process that leads to the suggested HTML output:
+
+1.  **Analyze the Request:**
+
+    *   **Role:** Senior Front-End Expert specializing in UI implementation.
+    *   **Context:**
+        *   Visual Spec: List Item (min-h 56px, padding 16px, divider #E6E6E6 with 16px inset), Tailwind mappings (rounded-12, text-#111827, bg-#3B82F6).
+        *   App Status: Existing page structure (Passenger Flow Detail).
+    *   **Task (T03):** "Device List Exception States" for "Passenger Flow Detail".
+        *   Action: UPDATE.
+        *   Type: Page.
+        *   Logic Branch: Exception/Empty States.
+        *   Dev Process:
+            1.  Loading Skeleton/Indicator for init/pagination.
+            2.  Empty State UI (Text: "No devices with passenger flow statistics enabled").
+            3.  Error State UI with Retry button.
+    *   **Output Requirements:**
+        *   **Format:** Strict Markdown structure with `<details>`, `<summary>`, specific headers, and a single HTML file.
+        *   **Visuals:** Mobile simulation (`w-[375px]` centered), strict adherence to visual specs (colors, spacing, rounded corners).
+        *   **Tech Stack:** React 18, ReactDOM 18, Babel, TailwindCSS, Lucide (via CDN). No destructuring of Lucide icons.
+        *   **Safety:** Icon rendering protection.
+        *   **No Native Alerts:** Use custom UI for feedback.
+
+2.  **Design the Component Structure:**
+
+    *   **Container:** Mobile wrapper (`w-[375px]`, gray background).
+    *   **Header:** Standard app header (Back button, Title "Passenger Flow Detail").
+    *   **Content Area:** Needs to switch between three states: `Loading`, `Empty`, `Error`, and (implicitly) `Success` (though the task focuses on the first three). I will implement a state switcher to demonstrate all three states easily.
+    *   **State 1: Loading (Skeleton):**
+        *   List items with shimmer effect.
+        *   Structure: Icon placeholder + Text lines + Text lines.
+        *   Visuals: Gray background, animation.
+    *   **State 2: Empty:**
+        *   Illustration (Icon).
+        *   Title: "暂无启用客流统计的设备".
+        *   Subtitle: "Go to settings to enable..." (Optional but good UX).
+    *   **State 3: Error:**
+        *   Illustration (Icon).
+        *   Title: "Load Failed".
+        *   Subtitle: "Network error or server issue."
+        *   Button: "Retry" (Primary color).
+
+3.  **Drafting the Code (Mental or Scratchpad):**
+
+    *   *Imports:* React, ReactDOM, Lucide.
+    *   *Icons:* `Monitor`, `WifiOff`, `RefreshCw`.
+    *   *Tailwind Config:* Need to use the specific colors mentioned: `#3B82F6` (primary), `#111827` (text), `#E6E6E6` (divider), `#ECECEC` (disabled bg).
+
+4.  **Refining the Visuals (Adhering to Specs):**
+
+    *   *List Item:* `min-h-[56px] px-[16px] flex items-center border-b border-[#E6E6E6]`.
+    *   *Skeleton:* Use `animate-pulse` or a custom shimmer keyframe. `bg-gray-200`.
+    *   *Empty/Error:* Centered content, vertically and horizontally. `flex flex-col items-center justify-center h-full`.
+    *   *Button:* `bg-[#3B82F6] text-white rounded-[12px] px-6 py-3`.
+
+5.  **Implementing the Logic (React):**
+
+    *   `const [state, setState] = React.useState('loading');`
+    *   Control buttons (outside the phone screen) to toggle states for demonstration purposes (since the user asked for a previewable HTML, interactive controls are better than just a static loop).
+
+6.  **Writing the Code (Iterative Refinement):**
+
+    *   *Setup:* HTML skeleton, CDN links.
+    *   *Styles:* Add custom `@keyframes` for the shimmer effect in `<style>`.
+    *   *Main Component:* `PassengerFlowDetail`.
+    *   *Sub-components:*
+        *   `LoadingSkeleton`: Repeated 3-4 times.
+        *   `EmptyState`: Icon + Text.
+        *   `ErrorState`: Icon + Text + Button.
+    *   *Icon Safety:*
+        ```javascript
+        const Monitor = LucideReact.Monitor || LucideReact.icons?.Monitor || (() => null);
+        const WifiOff = LucideReact.WifiOff || LucideReact.icons?.WifiOff || (() => null);
+        const RefreshCw = LucideReact.RefreshCw || LucideReact.icons?.RefreshCw || (() => null);
+        ```
+
+7.  **Addressing Specific Task Requirements:**
+
+    *   *Loading:* "Skeleton screen". I'll create a visual representation of the device list loading.
+    *   *Empty:* "No devices enabled". Specific text required.
+    *   *Error:* "Retry button logic". The button will trigger a simulated loading -> success/error flow.
+
+8.  **Final Polish:**
+
+    *   Ensure the container is centered (`flex items-center justify-center min-h-screen bg-gray-100`).
+    *   Ensure the phone frame looks good (`bg-white w-[375px] min-h-[600px] overflow-hidden shadow-2xl rounded-[3xl]`).
+    *   Add a "Debug Panel" outside the phone frame so the user can easily switch between Loading, Empty, and Error states to verify the UI.
+
+9.  **Constructing the Output:**
+
+    *   Wrap in the requested `<details>` block.
+    *   Add the description headers.
+    *   Insert the HTML code.
+
+**(Self-Correction during drafting):**
+*Initial thought:* Should I simulate a real API call?
+*Correction:* The task asks for *UI implementation* of these states. A real API call might fail randomly or be hard to control in a static HTML file. It's better to provide explicit controls to show each state clearly.
+
+*Check:* Did I use the correct border color?
+*Correction:* Spec says `#E6E6E6`. Tailwind default `border-gray-200` is close, but I should use `border-[#E6E6E6]` to be exact or map it in config. I'll use the arbitrary value for precision.
+
+*Check:* Did I use `rounded-[12px]` for the button?
+*Correction:* Yes, spec says "中圆角" maps to `rounded-[12px]`.
+
+10. **Final Code Generation** (Proceeding to generate the HTML string).
+
+</think><details>
+<summary>📂 点击展开页面原型：设备列表异常状态 (T03)</summary>
+
+### 📄 页面说明
+- **类型**: Page
+- **开发分支**: 异常/空状态
+- **核心逻辑**: 
+  1. **多状态切换演示**：为了方便预览，页面底部增加了一个调试面板，可一键切换“加载中”、“无数据”、“请求失败”三种状态。
+  2. **骨架屏加载**：使用 Shimmer 动画模拟列表初始化加载效果，符合视觉规范中的间距和高度。
+  3. **空/异常状态交互**：实现了 Error State 下的重试按钮逻辑（模拟重新请求过程），以及 Empty State 的特定文案展示。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客流详情 - 异常状态演示</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (Core & React) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
+
+    <!-- Custom Styles for Shimmer Effect -->
+    <style>
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-bg {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        body {
+            background-color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const LucideReact = window.LucideReact;
+
+        // 图标安全获取
+        const ChevronLeft = LucideReact.ChevronLeft || LucideReact.icons?.ChevronLeft || (() => null);
+        const Monitor = LucideReact.Monitor || LucideReact.icons?.Monitor || (() => null);
+        const WifiOff = LucideReact.WifiOff || LucideReact.icons?.WifiOff || (() => null);
+        const RefreshCw = LucideReact.RefreshCw || LucideReact.icons?.RefreshCw || (() => null);
+        const MoreVertical = LucideReact.MoreVertical || LucideReact.icons?.MoreVertical || (() => null);
+
+        // 骨架屏组件
+        const SkeletonItem = () => (
+            <div className="flex items-center px-[16px] py-[16px] border-b border-[#E6E6E6] bg-white min-h-[56px]">
+                {/* Icon Placeholder */}
+                <div className="w-10 h-10 rounded-[12px] skeleton-bg mr-4 shrink-0"></div>
+                {/* Text Placeholder */}
+                <div className="flex-1 space-y-2">
+                    <div className="h-4 w-1/3 skeleton-bg rounded"></div>
+                    <div className="h-3 w-1/4 skeleton-bg rounded"></div>
+                </div>
+            </div>
+        );
+
+        // 空状态组件
+        const EmptyState = () => (
+            <div className="flex flex-col items-center justify-center h-full px-8 py-12 text-center">
+                <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4 text-gray-400">
+                    {Monitor && <Monitor size={40} />}
+                </div>
+                <h3 className="text-[#111827] text-lg font-semibold mb-2">暂无启用客流统计的设备</h3>
+                <p className="text-gray-500 text-sm">当前门店下没有开启客流功能的设备，请前往设备管理页面配置。</p>
+            </div>
+        );
+
+        // 错误状态组件
+        const ErrorState = ({ onRetry, isRetrying }) => (
+            <div className="flex flex-col items-center justify-center h-full px-8 py-12 text-center">
+                <div className="w-24 h-24 rounded-full bg-red-50 flex items-center justify-center mb-4 text-red-400">
+                    {WifiOff && <WifiOff size={40} />}
+                </div>
+                <h3 className="text-[#111827] text-lg font-semibold mb-2">加载失败</h3>
+                <p className="text-gray-500 text-sm mb-6">网络连接异常，请检查网络设置后重试。</p>
+                <button 
+                    onClick={onRetry}
+                    disabled={isRetrying}
+                    className={`flex items-center justify-center px-8 py-3 rounded-[12px] text-white transition-colors duration-200 min-w-[120px]
+                        ${isRetrying ? 'bg-[#ECECEC] text-[#CCCCCC] cursor-not-allowed' : 'bg-[#3B82F6] active:bg-[#2563EB]'} // Active: darken 10%
+                    `}
+                >
+                    {isRetrying ? (
+                        <>
+                            <RefreshCw size={18} className="mr-2 animate-spin" />
+                            重试中...
+                        </>
+                    ) : (
+                        '重新加载'
+                    )}
+                </button>
+            </div>
+        );
+
+        // 主页面组件
+        const PassengerFlowDetail = () => {
+            // 状态: 'loading' | 'empty' | 'error' | 'success'
+            const [viewState, setViewState] = useState('loading'); 
+            const [isRetrying, setIsRetrying] = useState(false);
+
+            // 模拟重试逻辑
+            const handleRetry = () => {
+                setIsRetrying(true);
+                // 模拟网络请求
+                setTimeout(() => {
+                    setIsRetrying(false);
+                    // 这里为了演示，我们随机决定成功还是失败，或者直接切回loading
+                    // 在实际代码中这里会调用API
+                    setViewState('loading'); 
+                    setTimeout(() => setViewState('error'), 1500); // 模拟再次失败以便用户再次点击，或者改为 'empty'
+                }, 1500);
+            };
+
+            // 模拟初始化加载
+            useEffect(() => {
+                if (viewState === 'loading') {
+                    const timer = setTimeout(() => {
+                        // 默认演示 Error 状态，用户可以通过下方控制台切换
+                        setViewState('error'); 
+                    }, 2000);
+                    return () => clearTimeout(timer);
+                }
+            }, []);
+
+            return (
+                <div className="flex flex-col h-full bg-white">
+                    {/* 顶部导航栏 */}
+                    <header className="flex items-center justify-between px-4 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+                        <div className="flex items-center w-1/4">
+                            <button className="p-2 -ml-2 rounded-full active:bg-gray-100">
+                                {ChevronLeft && <ChevronLeft size={24} className="text-[#111827]" />}
+                            </button>
+                        </div>
+                        <h1 className="text-[#111827] font-semibold text-lg w-2/4 text-center truncate">客流详情</h1>
+                        <div className="flex items-center justify-end w-1/4">
+                            <button className="p-2 -mr-2 rounded-full active:bg-gray-100">
+                                {MoreVertical && <MoreVertical size={20} className="text-[#111827]" />}
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* 内容区域 */}
+                    <main className="flex-1 relative overflow-y-auto">
+                        {viewState === 'loading' && (
+                            <div className="py-2">
+                                {[1, 2, 3, 4, 5].map((i) => (
+                                    <SkeletonItem key={i} />
+                                ))}
+                            </div>
+                        )}
+
+                        {viewState === 'empty' && (
+                            <div className="h-[500px]">
+                                <EmptyState />
+                            </div>
+                        )}
+
+                        {viewState === 'error' && (
+                            <div className="h-[500px]">
+                                <ErrorState onRetry={handleRetry} isRetrying={isRetrying} />
+                            </div>
+                        )}
+                        
+                        {/* 成功状态占位 (非本次重点，仅作对比) */}
+                        {viewState === 'success' && (
+                             <div className="h-[500px] flex items-center justify-center text-gray-400">
+                                正常列表数据 (此处略)
+                             </div>
+                        )}
+                    </main>
+                </div>
+            );
+        };
+
+        // 调试控制台组件 (用于演示)
+        const DebugControls = ({ onChangeState }) => (
+            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur shadow-xl rounded-xl p-4 z-50 border border-gray-200 w-[340px]">
+                <p className="text-xs text-gray-500 mb-2 font-semibold uppercase tracking-wider">状态调试面板</p>
+                <div className="grid grid-cols-2 gap-2">
+                    {[
+                        { label: 'Loading', value: 'loading' },
+                        { label: 'Empty', value: 'empty' },
+                        { label: 'Error', value: 'error' },
+                        { label: 'Success', value: 'success' }
+                    ].map((btn) => (
+                        <button
+                            key={btn.value}
+                            onClick={() => onChangeState(btn.value)}
+                            className="px-3 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                        >
+                            {btn.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [state, setState] = useState('loading');
+
+            return (
+                <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+                    {/* 手机模拟容器 */}
+                    <div className="w-[375px] min-h-[667px] bg-gray-50 rounded-[3xl] shadow-2xl overflow-hidden border-[8px] border-gray-800 relative flex flex-col">
+                        <PassengerFlowDetail viewState={state} setViewState={setState} />
+                    </div>
+
+                    {/* 调试面板 */}
+                    <DebugControls onChangeState={setState} />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+```
