@@ -1,0 +1,390 @@
+<think>
+Here's a thinking process that leads to the suggested HTML/React code:
+
+1.  **Analyze the Request:**
+
+    *   **Role:** Senior Front-End Developer & 2D Interaction Specialist.
+    *   **Context:** Visual specifications (colors, spacing, border-radius), Tailwind configuration mapping.
+    *   **Task:** Create a high-fidelity mobile prototype for "Device List Exception States" (Task T03) within the "Passenger Flow Detail" page.
+    *   **Requirements:**
+        *   Implement Loading Skeleton/Indicator.
+        *   Implement Empty State (Text: "No devices with passenger flow statistics enabled").
+        *   Implement Error State (with Retry button).
+        *   **Visuals:** `w-[375px] min-h-screen` container, specific colors (#3B82F6 primary, #111827 text, #ECECEC disabled, etc.), specific list item specs (min-h 56px, p-16px).
+        *   **Tech Stack:** React 18, ReactDOM 18, Babel, TailwindCSS, Lucide Icons (via CDN, strict import rules).
+        *   **Output Format:** Specific Markdown structure (`<details>`, `<summary>`, HTML block).
+        *   **Language:** Chinese (as requested).
+
+2.  **Deconstruct the UI/UX:**
+
+    *   **Container:** A mobile frame simulation (centered, 375px width).
+    *   **Header:** Standard "Passenger Flow Detail" header (Back button, Title).
+    *   **Content Area:** Needs to switch between three states: Loading, Empty, Error. I should probably add a "Success" state tab or button to demonstrate the full lifecycle, but the task specifically focuses on the *exception* states. However, to make it interactive and testable, I will implement a state switcher (simulating different API responses) so the user can see all three designs in one prototype.
+    *   **State 1: Loading:** Skeleton screens matching the list item specs (56px height, 16px padding).
+    *   **State 2: Empty:** An icon (e.g., `Box` or `ServerOff`), a title, and a description. Centered.
+    *   **State 3: Error:** An icon (e.g., `AlertTriangle`), a title, a description, and a "Retry" button (Primary color).
+
+3.  **Drafting the Code (Mental or Scratchpad):**
+
+    *   *Imports:* React, ReactDOM, Babel, Tailwind script. Lucide React script.
+    *   *Tailwind Config:* Need to extend config to include the specific colors mentioned in the prompt (`#3B82F6`, `#111827`, `#ECECEC`, etc.) to ensure strict adherence.
+    *   *Component Structure:*
+        *   `App`: Main container.
+        *   `Header`: Navigation.
+        *   `DeviceList`: The main content area handling state.
+        *   `LoadingSkeleton`: The visual placeholder.
+        *   `EmptyState`: The "no data" view.
+        *   `ErrorState`: The "failed request" view.
+        *   `DebugControls`: A floating or fixed panel to toggle states (essential for a "2D interactive tool" to verify all designs).
+
+4.  **Refining Visuals (Strict Adherence):**
+
+    *   *List Item:* `min-h-[56px] p-[16px] border-b border-[#E6E6E6]`.
+    *   *Primary Button:* `bg-[#3B82F6] text-white rounded-[12px] active:bg-[#2563EB]` (darken 10%).
+    *   *Text:* `text-[#111827]` for primary.
+
+5.  **Implementing Logic (React):**
+
+    *   `useState` for `status` ('loading', 'empty', 'error', 'success').
+    *   `handleRetry`: Simulates an API call (sets to loading, then random result or specific result).
+    *   *Skeleton:* Use `animate-pulse` for shimmer effect. Gray blocks.
+    *   *Icons:* Use Lucide icons. `Box` for empty, `AlertCircle` for error.
+
+6.  **Writing the Code (Iterative refinement):**
+
+    *   *HTML Shell:* Standard HTML5.
+    *   *Head:* CDNs.
+    *   *Tailwind Config:*
+        ```javascript
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                primary: '#3B82F6',
+                'text-primary': '#111827',
+                'disabled-bg': '#ECECEC',
+                'disabled-text': '#CCCCCC',
+                divider: '#E6E6E6'
+              },
+              borderRadius: {
+                'md': '12px' // Mapping rounded-[12px]
+              }
+            }
+          }
+        }
+        ```
+    *   *React Logic:*
+        *   Need to handle the Lucide icon import strictly as requested: `const IconName = LucideReact.IconName || ...`.
+        *   Create a "Simulator" component at the bottom to switch states easily.
+
+7.  **Addressing Specific Task Requirements:**
+
+    *   *Loading:* "Loading skeleton or indicator". I will do a Skeleton list because it looks better for a list context.
+    *   *Empty:* "暂无启用客流统计的设备".
+    *   *Error:* "Retry button logic".
+
+8.  **Final Code Assembly & Polish:**
+
+    *   Ensure the mobile frame looks nice (shadow, centered).
+    *   Add comments explaining the mapping to the visual spec.
+    *   Check for "No native alerts" rule (use inline UI).
+    *   Check for "Single HTML file" rule.
+
+9.  **Constructing the Response:**
+
+    *   Wrap in the requested `<details>` block.
+    *   Write the explanation in Chinese.
+    *   Insert the code block.
+
+**(Self-Correction during drafting):**
+*Initial thought:* Just show the empty state.
+*Correction:* The user wants to see *all* exception states (Loading, Empty, Error). A static page can only show one. I must build an interactive "State Switcher" so the user can click and see how the Loading transitions to Empty or Error. This aligns with the "2D interactive tool" persona.
+
+*Visual Check:* The prompt asks for `min-h-screen`. Inside the `w-[375px]` container, I should probably use `h-[667px]` or `min-h-[667px]` (iPhone 8/SE size) or just `min-h-screen` relative to the container context to ensure it looks like a phone screen. I'll stick to a fixed height or flexible height with a background to simulate the viewport. Let's use `h-[812px]` (iPhone X style) or just `min-h-[600px]` to be safe, but the prompt says `min-h-screen`. I will make the body background gray, and the phone white.
+
+*Icon handling:* The prompt emphasizes strict icon handling.
+`const ArrowLeft = LucideReact.ArrowLeft || LucideReact.icons?.ArrowLeft || (() => null);`
+I will apply this pattern to all icons.
+
+10. **Final Output Generation** (Proceeding to generate the HTML string).
+    *   Title: 设备列表异常状态.
+    *   States: Loading, Empty, Error.
+    *   Controls: A small floating menu to toggle states.
+
+**(Detailed Design of States):**
+*   **Loading:** 3-4 rows of gray bars with `animate-pulse`. Height 56px.
+*   **Empty:** Centered flex column. Icon (Box). Title "暂无数据", Subtitle "暂无启用客流统计的设备".
+*   **Error:** Centered flex column. Icon (AlertTriangle). Title "加载失败". Button "重试".
+
+Let's write the code.
+
+</think>
+
+<details>
+<summary>📂 点击展开页面原型：设备列表异常状态 (T03)</summary>
+
+### 📄 页面说明
+- **类型**: Page
+- **开发分支**: 异常/空状态
+- **核心逻辑**: 
+    1. **多状态模拟器**：为了在一个页面中展示所有异常状态，底部增加了一个悬浮控制栏，可切换“加载中”、“无数据”、“加载失败”三种状态。
+    2. **骨架屏加载**：严格按照列表项高度（56px）和内边距（16px）实现的 Shimmer 动画效果。
+    3. **交互反馈**：错误状态下的“重试”按钮点击后，会模拟网络请求回到 Loading 状态，随后随机进入成功或失败状态，演示完整闭环。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备列表异常状态 - T03</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',      // 主色
+                        'primary-dark': '#2563EB', // 按下状态 (加深 10%)
+                        'text-primary': '#111827', // 一级文字
+                        'disabled-bg': '#ECECEC',  // 禁用背景
+                        'disabled-text': '#CCCCCC', // 禁用文字
+                        divider: '#E6E6E6',         // 分割线
+                        'bg-page': '#F5F5F5'       // 页面背景
+                    },
+                    borderRadius: {
+                        'md': '12px', // 中圆角
+                    },
+                    spacing: {
+                        '16': '16px', // 内边距
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 自定义骨架屏动画 */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-bg {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex justify-center items-center min-h-screen font-sans">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const LucideReact = window.LucideReact;
+
+        // 安全的图标加载方式
+        const ArrowLeft = LucideReact.ArrowLeft || LucideReact.icons?.ArrowLeft || (() => null);
+        const Box = LucideReact.Box || LucideReact.icons?.Box || (() => null);
+        const AlertTriangle = LucideReact.AlertTriangle || LucideReact.icons?.AlertTriangle || (() => null);
+        const RefreshCw = LucideReact.RefreshCw || LucideReact.icons?.RefreshCw || (() => null);
+        const Smartphone = LucideReact.Smartphone || LucideReact.icons?.Smartphone || (() => null);
+
+        // --- 子组件：导航栏 ---
+        const Header = ({ title }) => {
+            return (
+                <div className="sticky top-0 z-10 bg-white h-[56px] flex items-center px-[16px] border-b border-divider">
+                    <div className="flex items-center justify-center w-8 h-8 cursor-pointer active:bg-gray-100 rounded-full transition-colors">
+                        {ArrowLeft && <ArrowLeft size={20} className="text-text-primary" />}
+                    </div>
+                    <h1 className="flex-1 text-center text-[17px] font-semibold text-text-primary pr-8">
+                        {title}
+                    </h1>
+                </div>
+            );
+        };
+
+        // --- 子组件：骨架屏 ---
+        const LoadingSkeleton = () => {
+            return (
+                <div className="bg-white min-h-screen">
+                    {[1, 2, 3, 4, 5].map((item) => (
+                        <div 
+                            key={item} 
+                            className="flex items-center px-[16px] min-h-[56px] border-b border-[#E6E6E6]"
+                        >
+                            {/* 图标占位 */}
+                            <div className="w-10 h-10 rounded-full skeleton-bg mr-[16px] flex-shrink-0"></div>
+                            {/* 文本占位 */}
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 w-1/3 rounded skeleton-bg"></div>
+                                <div className="h-3 w-1/4 rounded skeleton-bg"></div>
+                            </div>
+                            {/* 箭头占位 */}
+                            <div className="w-4 h-4 rounded skeleton-bg"></div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- 子组件：空状态 ---
+        const EmptyState = () => {
+            return (
+                <div className="flex flex-col items-center justify-center min-h-[500px] px-[32px] text-center">
+                    <div className="w-[120px] h-[120px] bg-gray-50 rounded-full flex items-center justify-center mb-[24px]">
+                        {Box && <Box size={48} className="text-gray-300" />}
+                    </div>
+                    <h2 className="text-[16px] font-medium text-text-primary mb-[8px]">
+                        暂无数据
+                    </h2>
+                    <p className="text-[14px] text-gray-500 leading-normal">
+                        暂无启用客流统计的设备
+                    </p>
+                </div>
+            );
+        };
+
+        // --- 子组件：错误状态 ---
+        const ErrorState = ({ onRetry }) => {
+            return (
+                <div className="flex flex-col items-center justify-center min-h-[500px] px-[32px] text-center">
+                    <div className="w-[120px] h-[120px] bg-red-50 rounded-full flex items-center justify-center mb-[24px]">
+                        {AlertTriangle && <AlertTriangle size={48} className="text-red-400" />}
+                    </div>
+                    <h2 className="text-[16px] font-medium text-text-primary mb-[8px]">
+                        加载失败
+                    </h2>
+                    <p className="text-[14px] text-gray-500 leading-normal mb-[32px]">
+                        网络连接异常，请检查网络后重试
+                    </p>
+                    
+                    <button 
+                        onClick={onRetry}
+                        className="w-full max-w-[200px] h-[44px] bg-primary active:bg-primary-dark text-white rounded-md flex items-center justify-center text-[16px] font-medium transition-colors"
+                    >
+                        {RefreshCw && <RefreshCw size={18} className="mr-[8px]" />}
+                        重试
+                    </button>
+                </div>
+            );
+        };
+
+        // --- 子组件：模拟列表项 (用于展示成功状态对比) ---
+        const DeviceItem = ({ name, status }) => (
+            <div className="flex items-center px-[16px] min-h-[56px] bg-white border-b border-[#E6E6E6] active:bg-gray-50 transition-colors cursor-pointer">
+                {Smartphone && <Smartphone size={20} className="text-gray-400 mr-[16px]" />}
+                <div className="flex-1">
+                    <div className="text-[15px] text-text-primary">{name}</div>
+                    <div className="text-[12px] text-gray-500 mt-[2px]">{status}</div>
+                </div>
+                <div className="text-[#3B82F6] text-[12px] bg-blue-50 px-2 py-1 rounded">在线</div>
+            </div>
+        );
+
+        // --- 主页面 ---
+        const App = () => {
+            // 状态: 'loading' | 'empty' | 'error' | 'success'
+            const [viewState, setViewState] = useState('loading');
+
+            // 模拟重试逻辑
+            const handleRetry = () => {
+                setViewState('loading');
+                // 模拟 API 请求延迟
+                setTimeout(() => {
+                    // 这里为了演示，随机返回成功或失败，或者固定返回 Empty
+                    // 实际业务中这里会调用真实 API
+                    const isSuccess = Math.random() > 0.5;
+                    if (isSuccess) {
+                        setViewState('empty'); // 假设重试后依然无数据，或者改为 'success' 看效果
+                    } else {
+                        setViewState('error');
+                    }
+                }, 1500);
+            };
+
+            // 渲染内容区域
+            const renderContent = () => {
+                switch (viewState) {
+                    case 'loading':
+                        return <LoadingSkeleton />;
+                    case 'empty':
+                        return <EmptyState />;
+                    case 'error':
+                        return <ErrorState onRetry={handleRetry} />;
+                    case 'success':
+                        return (
+                            <div className="bg-white">
+                                {[1, 2, 3].map(i => (
+                                    <DeviceItem key={i} name={`设备入口 ${i}`} status="ID: 8829301" />
+                                ))}
+                            </div>
+                        );
+                    default:
+                        return <EmptyState />;
+                }
+            };
+
+            return (
+                <div className="relative w-[375px] min-h-screen bg-white shadow-2xl overflow-hidden flex flex-col">
+                    <Header title="客流详情" />
+                    
+                    <main className="flex-1 relative bg-bg-page">
+                        {renderContent()}
+                    </main>
+
+                    {/* 底部调试控制栏 (仅用于演示，实际项目中不存在) */}
+                    <div className="fixed bottom-[20px] left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-sm rounded-full px-4 py-2 flex gap-3 z-50 w-[340px] justify-between items-center shadow-lg border border-white/10">
+                        <span className="text-white text-xs font-mono opacity-70">DEV CONTROLS:</span>
+                        <div className="flex gap-2">
+                            {['loading', 'empty', 'error', 'success'].map((state) => (
+                                <button
+                                    key={state}
+                                    onClick={() => setViewState(state)}
+                                    className={`text-[10px] px-2 py-1 rounded capitalize transition-colors ${
+                                        viewState === state 
+                                        ? 'bg-primary text-white' 
+                                        : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+                                    }`}
+                                >
+                                    {state}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+```
+</details>
