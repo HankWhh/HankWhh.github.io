@@ -1,0 +1,372 @@
+<think>
+Here's a thinking process that leads to the suggested HTML/React solution:
+
+1.  **Analyze the Request:**
+
+    *   **Role:** Senior Front-End Expert specializing in UI implementation.
+    *   **Context:**
+        *   Visual Specs: List Item (min-height 56px, padding 16px, divider #E6E6E6), Tailwind mappings (rounded-[12px], text-[#111827], bg-[#3B82F6]), Interaction states (Default, Active/Pressed, Disabled).
+        *   Current App Status: "Passenger Flow Detail" page (客流详情页).
+    *   **Task:** Update the "Passenger Flow Detail" page structure.
+        *   Action: UPDATE.
+        *   Logic Branch: Framework Interaction.
+        *   Specifics:
+            1.  Add Tab switching component at the top (below nav or content top).
+            2.  Tab 1: "Statistics" (Original view).
+            3.  Tab 2: "Device List" (New view).
+            4.  Adjust layout for scrolling/height adaptation.
+            5.  State management for tabs (Default: Statistics).
+    *   **Output Requirements:**
+        *   Single HTML file.
+        *   Mobile simulation (w-[375px] centered).
+        *   Visual consistency (strict adherence to provided specs).
+        *   Tech Stack: React 18, ReactDOM 18, Babel, TailwindCSS, Lucide Icons (CDN).
+        *   Icon safety: Explicit assignment, no destructuring from `LucideReact`.
+        *   Format: Markdown `<details>` block.
+
+2.  **Design the UI Structure:**
+
+    *   **Container:** `w-[375px] min-h-screen bg-gray-50 mx-auto relative overflow-hidden shadow-2xl`.
+    *   **Header (Simulated):** Standard mobile header with a back button and title ("客流详情").
+    *   **Tabs Component:**
+        *   Fixed at the top (below header) or sticky within the scroll area. Given the requirement "top of content area", a sticky header inside the main scroll area or a fixed layout is best. Let's go with a fixed layout: Header -> Tabs -> Scrollable Content.
+        *   Visuals: Two segments. Active state uses primary color (`#3B82F6`) and white text. Inactive uses gray/white.
+    *   **Content Area (Scrollable):**
+        *   **Tab 1: Statistics (统计):** Needs to look like a dashboard. Maybe some charts (simulated with CSS/HTML) or summary cards. Let's create a summary card and a placeholder for a chart to make it look realistic.
+        *   **Tab 2: Device List (设备列表):** Needs to follow the "List Item" spec strictly (min-h 56px, padding 16px, border-bottom).
+    *   **Styling Details:**
+        *   Font: Sans-serif.
+        *   Colors: Primary `#3B82F6`, Text `#111827`, Divider `#E6E6E6`.
+        *   Rounded corners: `rounded-[12px]`.
+
+3.  **Implementation Steps (Mental Draft):**
+
+    *   *Step 1: HTML Skeleton & CDNs.* Set up React, ReactDOM, Babel, Tailwind.
+    *   *Step 2: Component Structure.*
+        *   `App` (Main container)
+        *   `Header`
+        *   `Tabs` (State holder for active tab)
+        *   `StatisticsView` (Content for Tab 1)
+        *   `DeviceListView` (Content for Tab 2)
+    *   *Step 3: Icon Handling.* Define `ChevronLeft`, `BarChart2`, `Server` using the safe assignment pattern.
+    *   *Step 4: Styling.* Apply Tailwind classes based on the provided specs.
+        *   List Item: `min-h-[56px] px-[16px] border-b border-[#E6E6E6] flex items-center justify-between`.
+        *   Tabs: `flex bg-white p-1 gap-2`. Active tab: `bg-[#3B82F6] text-white rounded-[8px]`.
+    *   *Step 5: Interaction.* Simple `useState` for tab switching.
+
+4.  **Refining the Code (Self-Correction during drafting):**
+
+    *   *Constraint Check:* The prompt asks for "Visual Specs: List Item... min-height 56px... padding 16px... divider 1px bottom #E6E6E6".
+    *   *Constraint Check:* "rounded-[12px] for medium radius".
+    *   *Constraint Check:* "bg-[#3B82F6] for primary".
+    *   *Constraint Check:* "Icon safety".
+    *   *Layout:* The prompt says "Ensure content area height adapts or is fixed scroll". I will use `flex-1 overflow-y-auto` for the content area to ensure the header and tabs stay visible while content scrolls.
+
+5.  **Drafting the React Components (Mental or Scratchpad):**
+
+    *   *Tabs:* Needs to look like a pill selector or underlined tabs. The prompt implies a "Tab switching component". A pill selector often looks cleaner on mobile. Let's use a segmented control style (Pill shape).
+    *   *Statistics View:* A card with "Total Visitors", "Peak Time". Maybe a visual bar chart using divs.
+    *   *Device List View:* A list of items. "Camera 01", "Gate A", etc. Each item follows the 56px rule.
+
+6.  **Writing the Actual Code (incorporating into the final HTML structure):**
+
+    *   *Icons:* `const ChevronLeft = LucideReact.ChevronLeft || ...`
+    *   *State:* `const [activeTab, setActiveTab] = useState('statistics');`
+    *   *Render Logic:* Conditional rendering based on `activeTab`.
+
+7.  **Final Polish:**
+    *   Ensure the background of the main container is distinct (gray) to show off the white cards/lists.
+    *   Add hover/active states for the Tab buttons (as per spec: "Active/Pressed: background darkens 10%"). Since it's mobile, "active" usually means "pressed". I'll add `active:bg-blue-600` to the primary buttons.
+    *   Verify the "List Item" styling is pixel-perfect according to the prompt.
+
+8.  **Output Generation:** Assemble into the requested Markdown format.
+
+**(Self-Correction during code generation):**
+*Wait, the prompt asks for specific Tailwind mappings.*
+`rounded-[12px]` -> Medium radius.
+`text-[#111827]` -> Primary text.
+`bg-[#3B82F6]` -> Primary color.
+I must use these exact hex codes in the classes.
+
+*List Item Spec:*
+Height: min 56px.
+Padding: 16px.
+Divider: 1px bottom, #E6E6E6, left margin 16px (Wait, standard list items usually span full width or have inset dividers. The prompt says "Divider: 1px bottom, color #E6E6E6, **left margin 16px**". This implies the divider shouldn't touch the absolute left edge, or maybe it means the content has 16px padding so the divider aligns with the text. I will interpret "left margin 16px" as `ml-4` or `pl-4` on the border, or simply that the divider sits inside the padding area. Let's make it `border-b border-[#E6E6E6] ml-[16px]` inside the container, or apply it to the container and use `pl-4` on the text. Actually, a common pattern is the full width line, but if the spec says "left empty 16px", it usually means `border-l-0` or `ml-4`. I will use `ml-[16px]` on the divider line to strictly follow "左侧留空 16px".)
+
+Let's refine the "Tab Switching" logic.
+Tab 1: 统计
+Tab 2: 设备列表
+
+Let's build it.
+
+**(Final Code Structure Plan)**
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ ...CDNs...
+ ...Tailwind Config (optional, can just use arbitrary values)...
+</head>
+<body>
+ <div id="root"></div>
+ <script type="text/babel">
+   // Icon definitions
+   // Components: Header, TabControl, StatsView, DeviceListView
+   // Main App
+ </script>
+</body>
+</html>
+```
+
+Proceeding to generate response.
+
+</think><details>
+<summary>📂 点击展开页面原型：客流详情页主体结构 (T01)</summary>
+
+### 📄 页面说明
+- **类型**: Page (Update)
+- **开发分支**: 框架交互
+- **核心逻辑**:
+    1.  **Tab 状态管理**：实现了 `statistics` (统计) 和 `deviceList` (设备列表) 两个视图的无缝切换，默认展示统计视图。
+    2.  **自适应滚动布局**：采用 Flexbox 布局 (`flex-col`)，固定顶部导航和 Tab 栏，内容区域 (`flex-1 overflow-y-auto`) 独立滚动，确保在不同数据量下页面体验流畅。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客流详情 - Passenger Flow Detail</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        /* 隐藏滚动条但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const LucideReact = window.LucideReact;
+
+        // --- 安全图标定义 ---
+        const ChevronLeft = LucideReact.ChevronLeft || (() => null);
+        const BarChart3 = LucideReact.BarChart3 || (() => null);
+        const Server = LucideReact.Server || (() => null);
+        const Users = LucideReact.Users || (() => null);
+        const Activity = LucideReact.Activity || (() => null);
+        const ArrowRight = LucideReact.ArrowRight || (() => null);
+        const Video = LucideReact.Video || (() => null);
+
+        // --- 模拟数据 ---
+        const MOCK_DEVICES = [
+            { id: 1, name: "入口摄像头 01", status: "online", count: 1240 },
+            { id: 2, name: "入口摄像头 02", status: "online", count: 980 },
+            { id: 3, name: "电梯厅传感器", status: "offline", count: 0 },
+            { id: 4, name: "主通道闸机 A", status: "online", count: 3400 },
+            { id: 5, name: "主通道闸机 B", status: "online", count: 3250 },
+        ];
+
+        // --- 组件: 导航栏 ---
+        const Header = ({ title }) => {
+            return (
+                <header className="bg-white h-[48px] flex items-center px-[16px] justify-between shadow-sm flex-shrink-0 z-20">
+                    <button className="p-2 -ml-2 text-[#111827] active:bg-gray-100 rounded-full transition-colors">
+                        {ChevronLeft && <ChevronLeft size={20} />}
+                    </button>
+                    <h1 className="text-[16px] font-medium text-[#111827]">{title}</h1>
+                    <div className="w-8"></div> {/* 占位保持居中 */}
+                </header>
+            );
+        };
+
+        // --- 组件: Tab 切换器 ---
+        const TabSwitcher = ({ activeTab, onTabChange }) => {
+            const tabs = [
+                { key: 'statistics', label: '统计', icon: BarChart3 },
+                { key: 'deviceList', label: '设备列表', icon: Server }
+            ];
+
+            return (
+                <div className="bg-white px-[16px] pt-[12px] pb-[8px] border-b border-[#E6E6E6] flex-shrink-0 z-10">
+                    <div className="bg-gray-100 p-1 rounded-[8px] flex">
+                        {tabs.map((tab) => {
+                            const isActive = activeTab === tab.key;
+                            const Icon = tab.icon;
+                            return (
+                                <button
+                                    key={tab.key}
+                                    onClick={() => onTabChange(tab.key)}
+                                    className={`
+                                        flex-1 flex items-center justify-center gap-[6px] h-[36px] rounded-[6px] text-[14px] font-medium transition-all duration-200
+                                        ${isActive 
+                                            ? 'bg-[#3B82F6] text-white shadow-sm' 
+                                            : 'text-[#6B7280] hover:text-[#111827]'}
+                                    `}
+                                >
+                                    {Icon && <Icon size={16} />}
+                                    {tab.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 视图: 统计 (Tab 1) ---
+        const StatisticsView = () => {
+            return (
+                <div className="p-[16px] space-y-[16px]">
+                    {/* 核心指标卡片 */}
+                    <div className="bg-white rounded-[12px] p-[20px] shadow-sm">
+                        <div className="flex items-center gap-2 mb-[16px]">
+                            {Users && <Users size={18} className="text-[#3B82F6]" />}
+                            <span className="text-[#14px] text-[#6B7280]">今日总客流</span>
+                        </div>
+                        <div className="flex items-baseline gap-[4px]">
+                            <span className="text-[32px] font-bold text-[#111827]">12,580</span>
+                            <span className="text-[12px] text-[#10B981]">+5.2%</span>
+                        </div>
+                    </div>
+
+                    {/* 趋势图模拟 */}
+                    <div className="bg-white rounded-[12px] p-[20px] shadow-sm">
+                        <div className="flex items-center justify-between mb-[20px]">
+                            <h3 className="text-[16px] font-medium text-[#111827]">客流趋势</h3>
+                            <span className="text-[12px] text-[#6B7280]">近24小时</span>
+                        </div>
+                        <div className="h-[150px] flex items-end justify-between gap-[8px]">
+                            {[40, 65, 30, 85, 50, 95, 60, 45, 70, 55, 80, 40].map((h, i) => (
+                                <div 
+                                    key={i} 
+                                    className="w-full bg-[#3B82F6] rounded-t-[4px] opacity-80 hover:opacity-100 transition-opacity"
+                                    style={{ height: `${h}%` }}
+                                ></div>
+                            ))}
+                        </div>
+                        <div className="flex justify-between mt-[8px] text-[10px] text-[#9CA3AF]">
+                            <span>00:00</span>
+                            <span>12:00</span>
+                            <span>23:59</span>
+                        </div>
+                    </div>
+
+                    {/* 实时动态列表 */}
+                    <div className="bg-white rounded-[12px] p-[16px] shadow-sm">
+                        <div className="flex items-center gap-2 mb-[12px]">
+                            {Activity && <Activity size={16} className="text-[#F59E0B]" />}
+                            <span className="text-[14px] font-medium text-[#111827]">实时动态</span>
+                        </div>
+                        <div className="space-y-[12px]">
+                            {[
+                                { time: '10:23', event: '检测到拥挤', loc: '东门入口' },
+                                { time: '10:15', event: '客流高峰预警', loc: '一楼大厅' },
+                                { time: '09:50', event: '设备离线', loc: '北区闸机' }
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex justify-between items-start text-[13px]">
+                                    <span className="text-[#6B7280] w-[40px]">{item.time}</span>
+                                    <div className="flex-1 pl-[8px] border-l border-[#E6E6E6]">
+                                        <div className="text-[#111827]">{item.event}</div>
+                                        <div className="text-[#9CA3AF] text-[12px] mt-[2px]">{item.loc}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 视图: 设备列表 (Tab 2) ---
+        const DeviceListView = () => {
+            return (
+                <div className="bg-white min-h-full">
+                    {MOCK_DEVICES.map((device, index) => (
+                        <div 
+                            key={device.id} 
+                            // 严格按照规范：最小高度 56px，内边距 16px，分割线 1px 底部 #E6E6E6，左侧留空 16px
+                            className="min-h-[56px] px-[16px] flex items-center justify-between relative"
+                        >
+                            {/* 分割线：绝对定位在底部，左侧留空 16px */}
+                            {index !== MOCK_DEVICES.length - 1 && (
+                                <div className="absolute bottom-0 left-[16px] right-0 h-[1px] bg-[#E6E6E6]"></div>
+                            )}
+                            
+                            <div className="flex items-center gap-[12px] flex-1">
+                                <div className={`p-2 rounded-full ${device.status === 'online' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                                    {Video && <Video size={18} />}
+                                </div>
+                                <div>
+                                    <div className="text-[15px] text-[#111827] font-medium">{device.name}</div>
+                                    <div className="text-[12px] text-[#6B7280] mt-[2px]">
+                                        {device.status === 'online' ? `今日客流 ${device.count}` : '设备离线'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button className="p-2 -mr-2 text-[#9CA3AF] active:bg-gray-50 rounded-full">
+                                {ArrowRight && <ArrowRight size={18} />}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- 主页面组件 ---
+        const PassengerFlowDetail = () => {
+            const [activeTab, setActiveTab] = useState('statistics');
+
+            return (
+                <div className="w-[375px] min-h-screen bg-gray-50 relative shadow-2xl overflow-hidden flex flex-col">
+                    {/* 1. 顶部导航栏 */}
+                    <Header title="客流详情" />
+
+                    {/* 2. Tab 切换组件 */}
+                    <TabSwitcher activeTab={activeTab} onTabChange={setActiveTab} />
+
+                    {/* 3. 内容区域 (自适应滚动) */}
+                    <main className="flex-1 overflow-y-auto no-scrollbar bg-gray-50">
+                        {activeTab === 'statistics' ? <StatisticsView /> : <DeviceListView />}
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PassengerFlowDetail />);
+    </script>
+</body>
+</html>
+```
