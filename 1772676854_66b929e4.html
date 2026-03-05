@@ -1,0 +1,382 @@
+<think>
+Here's a thinking process that leads to the suggested HTML file:
+
+1.  **Analyze the Request:**
+
+    *   **Role:** Senior Frontend Engineer specializing in high-fidelity mobile prototypes.
+    *   **Context:** Specific visual guidelines (List Item: min-height 56px, padding 16px, divider 1px #E6E6E6, left inset 16px), Tailwind mapping (`rounded-[12px]`, `text-[#111827]`, `bg-[#3B82F6]`), and interaction states.
+    *   **Task:** Create a "Device List View" (设备列表视图) page.
+    *   **Specific Requirements:**
+        *   Mobile simulation container (375px wide).
+        *   List container with pagination logic (simulated, limit 10).
+        *   List Item UI: Left icon (device), Main area (Device Name, Model).
+        *   Status UI: Dot + Text (Green = Online, Gray = Offline).
+        *   No interaction (no `onClick`).
+        *   Simulate backend fetch (filter: passenger flow enabled = true, pagination params).
+    *   **Technical Constraints:**
+        *   Single HTML file.
+        *   No external CSS/JS files (use CDN).
+        *   React 18, ReactDOM 18, Babel, Tailwind, Lucide (Core + React).
+        *   Strict icon handling (no destructuring).
+        *   Markdown structure for output (collapsible details).
+
+2.  **Visual Design & Layout Strategy:**
+
+    *   **Container:** A centered div with `w-[375px] h-[812px]` (or min-h-screen) to mimic an iPhone. Background color should be neutral (e.g., `#F5F5F7` or similar light gray) to contrast with the white list.
+    *   **Header:** Standard mobile header (Title: "Device List", maybe a back button for visual context).
+    *   **List Structure:**
+        *   `ul` or `div` container.
+        *   Each item needs `min-h-[56px]`, `p-[16px]`, `flex`, `items-center`.
+        *   Divider: `border-b border-[#E6E6E6] ml-[16px]` (using Tailwind classes).
+    *   **Item Content:**
+        *   Left: Icon (e.g., `Server` or `Monitor`).
+        *   Middle: Title (`text-[#111827]`, font-bold), Subtitle (Model, lighter color).
+        *   Right: Status (Dot + Text).
+    *   **Pagination:** A simple "Load More" or visual indicator at the bottom, or just infinite scroll simulation. The prompt asks for "pagination logic", so I'll implement a state that holds a list of devices and a "load more" button (or just render the first 10 for the prototype to keep it clean, but show the logic in code). Let's do a "Load More" button at the bottom to demonstrate the `page` and `size` logic.
+
+3.  **Data Structure (Mock):**
+
+    *   Need an array of device objects: `{ id, name, model, status (online/offline) }`.
+    *   Need a function `fetchDevices(page, size)` that simulates an API call with a delay.
+
+4.  **Component Architecture (React):**
+
+    *   `App`: Main container.
+    *   `Header`: Top bar.
+    *   `DeviceList`: Manages state (`devices`, `loading`, `page`, `hasMore`).
+    *   `DeviceItem`: Renders a single row.
+    *   `StatusBadge`: Renders the dot and text.
+
+5.  **Refining the "No Interaction" Requirement:**
+
+    *   The prompt says "Remove or disable `onClick`".
+    *   So, `DeviceItem` will just be a `div`, not a `button` or clickable `div`.
+
+6.  **Drafting the Code (Mental or Scratchpad):**
+
+    *   *Tailwind Config:* Use the CDN script.
+    *   *Icons:* `const Monitor = LucideReact.Monitor || ...`
+    *   *Colors:*
+        *   Online: Green dot (e.g., `bg-[#10B981]`).
+        *   Offline: Gray dot (e.g., `bg-[#9CA3AF]`).
+        *   Text: Primary `#111827`, Secondary `#6B7280`.
+
+7.  **Step-by-Step Implementation:**
+
+    *   **HTML Shell:** Standard boilerplate + CDNs.
+    *   **React Logic:**
+        *   Define `mockApiCall`.
+        *   `useEffect` to load initial data.
+        *   `loadMore` function for pagination.
+    *   **Styling Details:**
+        *   *List Item:* `flex items-center p-[16px] min-h-[56px] bg-white`.
+        *   *Divider:* Use a pseudo-element or a child div with `absolute bottom-0 left-[16px] right-0 h-[1px] bg-[#E6E6E6]`. Actually, simpler to just use `border-b border-[#E6E6E6]` on the item and use `ml-[16px]` on a wrapper or `pl-0`? The requirement says "Divider: 1px bottom, color #E6E6E6, left empty 16px".
+        *   *Divider Solution:* Put the border on the item, but apply `pl-[16px]` to a child wrapper? No, easier: Item has `relative`, divider is `absolute bottom-0 left-[16px] w-[calc(100%-16px)] h-[1px] bg-[#E6E6E6]`. Or simply `border-b border-[#E6E6E6]` on the item and `ml-[16px]` on the inner content? No, the divider needs to start *after* the padding.
+        *   *Correct Divider approach:* The item has `p-[16px]`. The divider should be inside. `border-b` applies to the box. If I use `border-b`, it spans the whole width including padding. To have "left empty 16px", I should use a `div` inside the list item for the content, and the list item itself has the border? No.
+        *   *Best approach:* List Item container has `p-[16px]`. Inside, a `div` with `border-b border-[#E6E6E6] w-full absolute bottom-0 left-[16px] right-0`. Wait, `left-[16px]` means it starts 16px from the left. `right-0` goes to edge. Width = 100% - 16px.
+
+8.  **Writing the Code (Iterative refinement):**
+
+    *   *Imports:* React, ReactDOM, LucideReact.
+    *   *Mock Data Generation:* Create a helper to generate 25 items.
+    *   *Main Component:*
+        *   State: `data`, `page`, `loading`.
+        *   Fetch: `setTimeout` to simulate network.
+    *   *Render:*
+        *   Map through `data`.
+        *   Render `DeviceItem`.
+        *   Render "Loading" or "Load More" button.
+
+9.  **Addressing Specific Prompt Constraints:**
+
+    *   "No native alerts": Use a custom toast or just console logs/internal state for feedback.
+    *   "Standalone HTML": Everything in one file.
+    *   "Visual Consistency": Check colors against the provided list.
+    *   "Icon Safety": `const Monitor = LucideReact.Monitor || ...`
+
+10. **Final Polish:**
+
+    *   Ensure the mobile frame looks good (centered, shadow).
+    *   Check the "Passenger Flow Detail" context. The title should probably reflect that or be generic "Device List". The prompt says "Target file: Passenger Flow Detail", but the page name is "Device List View". I will title it "Device List" but maybe add a breadcrumb or context hint.
+    *   Check the status dot logic. Green for online, Gray for offline.
+
+11. **Constructing the Output:** Assemble into the requested Markdown format.
+
+    *   *Self-Correction during coding:* The prompt asks to "Disable onClick". I will ensure there is no `cursor-pointer` and no click handlers.
+    *   *Pagination:* I'll implement a "Load More" button at the bottom to clearly demonstrate the `page` and `size` logic requested.
+
+12. **Final Code Structure Check:**
+    *   `<!DOCTYPE html>`
+    *   `<html>`
+    *   `<head>` with Tailwind script, React CDNs, Babel.
+    *   `<body>` with `<div id="root">`.
+    *   `<script type="text/babel">` with the React code.
+    *   Tailwind config in the script tag to customize colors if needed (though arbitrary values like `#E6E6E6` are fine).
+
+**(Self-Correction on Divider):** The requirement is "Divider: 1px bottom, color #E6E6E6, left empty 16px".
+If the item has `p-[16px]`, the content is inset. The divider usually sits *under* the content but aligned with the text start.
+If I put the border on the list item itself, it spans the full width.
+To achieve "left empty 16px", I will use a `div` inside the list item positioned absolute at the bottom: `absolute bottom-0 left-[16px] right-0 h-[1px] bg-[#E6E6E6]`. Wait, if `right-0`, it goes to the edge. The padding is 16px. So `left-[16px]` and `right-0` creates the visual gap on the left.
+
+Let's write the code.
+
+**(Code Construction - Mental Draft):**
+```jsx
+const DeviceItem = ({ device }) => (
+  <div className="relative flex items-center p-[16px] min-h-[56px] bg-white">
+     {/* Content */}
+     {/* Divider */}
+     <div className="absolute bottom-0 left-[16px] right-0 h-[1px] bg-[#E6E6E6]"></div>
+  </div>
+)
+```
+This looks correct.
+
+**(Status Component):**
+Green dot: `w-2 h-2 rounded-full bg-[#10B981]` (Using a standard green, or check if there's a spec. The prompt only gave specific colors for text/bg/primary. I will use a semantic green for "Online" and gray for "Offline" as implied by "Green dot", "Gray dot").
+
+Let's proceed with generating the response.
+
+</think>
+
+<details>
+<summary>📂 点击展开页面原型：设备列表视图 (T02)</summary>
+
+### 📄 页面说明
+- **类型**: Page
+- **开发分支**: 正常数据展示
+- **核心逻辑**: 
+    1.  **分页加载模拟**：实现了模拟后端接口 `fetchDevices`，支持传入 `page` 和 `size` 参数，并在底部提供“加载更多”交互，单次加载限制为 10 条。
+    2.  **静态列表展示**：严格按照规范实现了无交互的列表项，包含设备图标、信息层级（名称/型号）及状态圆点组件。
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备列表视图 - Device List View</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons (Core + React) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.min.js"></script>
+
+    <style>
+        /* Custom scrollbar hiding for clean mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const LucideReact = window.LucideReact;
+
+        // --- Icon Safety Wrappers ---
+        const Monitor = LucideReact.Monitor || (() => null);
+        const Server = LucideReact.Server || (() => null);
+        const ChevronLeft = LucideReact.ChevronLeft || (() => null);
+        const MoreVertical = LucideReact.MoreVertical || (() => null);
+
+        // --- Mock Data Generator ---
+        const generateMockDevices = (count, startId) => {
+            return Array.from({ length: count }).map((_, i) => {
+                const id = startId + i;
+                const isOnline = Math.random() > 0.3; // 70% chance online
+                return {
+                    id: id,
+                    name: `智能客流设备 ${id.toString().padStart(3, '0')}`,
+                    model: `Model-X${Math.floor(Math.random() * 900) + 100}`,
+                    status: isOnline ? 'online' : 'offline',
+                    location: `区域 ${String.fromCharCode(65 + (id % 5))}-${id % 20 + 1}`
+                };
+            });
+        };
+
+        // --- Components ---
+
+        // 1. Status Badge Component
+        const StatusBadge = ({ status }) => {
+            const isOnline = status === 'online';
+            const dotColor = isOnline ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'; // Green for online, Gray for offline
+            const textColor = isOnline ? 'text-[#10B981]' : 'text-[#9CA3AF]';
+            const labelText = isOnline ? '在线' : '离线';
+
+            return (
+                <div className="flex items-center space-x-1">
+                    <span className={`w-2 h-2 rounded-full ${dotColor}`}></span>
+                    <span className={`text-xs font-medium ${textColor}`}>{labelText}</span>
+                </div>
+            );
+        };
+
+        // 2. Device List Item Component
+        const DeviceItem = ({ device }) => {
+            return (
+                <div className="relative flex items-center p-[16px] min-h-[56px] bg-white group">
+                    {/* Left Icon */}
+                    <div className="flex-shrink-0 mr-[16px] flex items-center justify-center w-10 h-10 rounded-[12px] bg-[#F3F4F6]">
+                        <Monitor size={20} className="text-[#6B7280]" />
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-[#111827] text-sm font-semibold truncate leading-tight mb-1">
+                            {device.name}
+                        </h3>
+                        <p className="text-[#9CA3AF] text-xs truncate">
+                            {device.model} · {device.location}
+                        </p>
+                    </div>
+
+                    {/* Right Status */}
+                    <div className="flex-shrink-0 ml-[12px]">
+                        <StatusBadge status={device.status} />
+                    </div>
+
+                    {/* Divider: 1px bottom, color #E6E6E6, left empty 16px */}
+                    <div className="absolute bottom-0 left-[16px] right-0 h-[1px] bg-[#E6E6E6]"></div>
+                </div>
+            );
+        };
+
+        // 3. Main Page Component
+        const DeviceListPage = () => {
+            const [devices, setDevices] = useState([]);
+            const [page, setPage] = useState(1);
+            const [loading, setLoading] = useState(false);
+            const [hasMore, setHasMore] = useState(true);
+            const pageSize = 10; // 单页加载数量上限为 10
+
+            // Simulated Backend API Call
+            const fetchDevices = async (pageNum, size) => {
+                setLoading(true);
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                const newData = generateMockDevices(size, (pageNum - 1) * size);
+                
+                // Simulate end of data after 3 pages
+                const moreDataAvailable = pageNum < 3;
+
+                setLoading(false);
+                setHasMore(moreDataAvailable);
+                return newData;
+            };
+
+            // Initial Load
+            useEffect(() => {
+                const loadInitial = async () => {
+                    const data = await fetchDevices(1, pageSize);
+                    setDevices(data);
+                };
+                loadInitial();
+            }, []);
+
+            // Load More Handler
+            const handleLoadMore = async () => {
+                if (loading || !hasMore) return;
+                
+                const nextPage = page + 1;
+                const newData = await fetchDevices(nextPage, pageSize);
+                
+                setDevices(prev => [...prev, ...newData]);
+                setPage(nextPage);
+            };
+
+            return (
+                <div className="w-[375px] h-[812px] bg-[#F5F5F7] flex flex-col shadow-2xl overflow-hidden relative rounded-[40px] border-[8px] border-[#1a1a1a]">
+                    
+                    {/* Header */}
+                    <header className="flex-none h-[56px] bg-white flex items-center justify-between px-[16px] border-b border-[#E6E6E6] z-10">
+                        <div className="flex items-center">
+                            <button className="p-2 -ml-2 rounded-full active:bg-gray-100 transition-colors">
+                                <ChevronLeft size={24} className="text-[#111827]" />
+                            </button>
+                            <h1 className="text-[#111827] text-[17px] font-bold ml-[-8px]">客流详情</h1>
+                        </div>
+                        <button className="p-2 -mr-2 rounded-full active:bg-gray-100 transition-colors">
+                            <MoreVertical size={20} className="text-[#111827]" />
+                        </button>
+                    </header>
+
+                    {/* Filter/Context Bar (Optional visual context) */}
+                    <div className="flex-none px-[16px] py-[12px] bg-[#F5F5F7]">
+                        <div className="flex items-center space-x-2">
+                            <span className="text-xs font-medium text-[#6B7280] bg-white px-2 py-1 rounded-md border border-[#E5E7EB]">
+                                筛选: 启用客流统计
+                            </span>
+                            <span className="text-xs text-[#9CA3AF]">共 {devices.length} 台设备</span>
+                        </div>
+                    </div>
+
+                    {/* List Container */}
+                    <main className="flex-1 overflow-y-auto no-scrollbar bg-white">
+                        <div className="pb-4">
+                            {devices.map((device) => (
+                                <DeviceItem key={device.id} device={device} />
+                            ))}
+                        </div>
+
+                        {/* Pagination / Loading Area */}
+                        <div className="py-[20px] flex justify-center items-center min-h-[60px]">
+                            {loading ? (
+                                <div className="flex items-center space-x-2">
+                                    <div className="w-4 h-4 border-2 border-[#3B82F6] border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-xs text-[#6B7280]">加载中...</span>
+                                </div>
+                            ) : hasMore ? (
+                                <button 
+                                    onClick={handleLoadMore}
+                                    className="px-6 py-2 bg-[#F3F4F6] text-[#3B82F6] text-xs font-medium rounded-full active:bg-[#E5E7EB] transition-colors"
+                                >
+                                    加载更多
+                                </button>
+                            ) : (
+                                <span className="text-xs text-[#9CA3AF]">没有更多数据了</span>
+                            )}
+                        </div>
+                    </main>
+
+                    {/* Bottom Safe Area Indicator (Visual only) */}
+                    <div className="flex-none h-[5px] w-full flex justify-center pb-2 bg-white">
+                        <div className="w-[134px] h-[5px] bg-[#1a1a1a] rounded-full opacity-20"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DeviceListPage />);
+    </script>
+</body>
+</html>
+```
+</details>
